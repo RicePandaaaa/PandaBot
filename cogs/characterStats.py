@@ -1,14 +1,15 @@
 import discord
 from discord.ext import commands
-import csv
+
 import dataProcessor
 
-class Character(commands.Cog):
+class CharacterStats(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.MAX_INDEX = 3
-        self.file_editor = dataProcessor.FileEditor()
+        self.types_of_data = ["General Attributes", "Skill Points", "Dungeon Master Optional Points", 
+                             "Defensive Attributes", "Saving Throws", "Character Skills"]
+        self.processor = dataProcessor.Processor()
 
     """
     Loads a character from the characterList.csv file given a name from the user
@@ -30,52 +31,62 @@ class Character(commands.Cog):
                 1) Skill Points
                 2) Dungeon Master Optional Points
                 3) Defensive Attributes
+                4) Saving Throws
+                5) Character Skills
                 """)
-    async def showchar(self, ctx, name, *indices):
-        character_data = self.file_editor.load_data(name)
+    async def showcharstats(self, ctx, name, *indices):
+        # Character was not found with the given name
+        if not self.processor.character_exists(name):
+            await ctx.send(f"No character was found with the name \"{name}\"")
+
+        character = self.processor.get_character(name)
 
         data_indices = []
         if len(indices) > 0:
             try:
                 for index in indices:
                     data_index = int(index)
-                    if data_index > self.MAX_INDEX:
+                    if data_index > len(self.types_of_data):
                         raise Exception("Invalid argument", "Invalid indices given.")
                     data_indices.append(data_index)
             except:
                 await ctx.send("Invalid indices given.")
                 return
 
-
-        # Character was not found with the given name
-        if character_data is None:
-            await ctx.send(f"No character was found with the name \"{name}\"")
+        else:
+            data_indices = [index for index in range(len(self.types_of_data))]
         
         # Create embeds for each type of data
-        else:
-            await ctx.send(f"Data for \"{name}\"")
-            types_of_data = ["General Attributes", "Skill Points", "Dungeon Master Optional Points", "Defensive Attributes"]
+        await ctx.send(f"Data for \"{name}\"")
+        print(data_indices)
 
-            for index in range(len(types_of_data)):
-                if len(data_indices) == 0 or (len(data_indices) > 0 and index in data_indices):
-                    embed = discord.Embed(title=types_of_data[index])
+        data_indices.sort()
+        character_data = character.get_data(data_indices)
+        for index in range(len(data_indices)):
+            embed = discord.Embed(title=self.types_of_data[data_indices[index]])
 
-                    for key in character_data[index]:
-                        embed.add_field(name=key, value=character_data[index][key])
+            for key in character_data[index]:
+                embed.add_field(name=key, value=character_data[index][key])
 
-                    await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
 
     """
     If the user forgot to enter a name, catch the error and remind them
     """
-    @showchar.error
-    async def showchar_error(self, ctx, error):
+    @showcharstats.error
+    async def showcharstats_error(self, ctx, error):
         if isinstance(error, commands.errors.MissingRequiredArgument):
             await ctx.send("Please add the character's name after the command!")
         else:
-            await ctx.send("Unknown error caught.")
+            await ctx.send(error)
+
+"""
+    @commands.command(brief="Claim a character")
+    async def claim(self, ctx, name):
+        if self.file_editor.character_exists(name):
+"""           
     
 
 
 def setup(bot):
-    bot.add_cog(Character(bot))
+    bot.add_cog(CharacterStats(bot))
