@@ -51,6 +51,8 @@ class Processor():
                 for character_skill in character_skills:
                     character_skills[character_skill] = row[character_skill]
 
+                owner = int(row["Owner"])
+
                 # Update the character from default values
                 dnd_character.set_attributes(attributes)
                 dnd_character.set_skill_points(skill_points)
@@ -58,6 +60,7 @@ class Processor():
                 dnd_character.set_health_and_armor(health_and_armor)
                 dnd_character.set_saving_throws(saving_throws)
                 dnd_character.set_character_skills(character_skills)
+                dnd_character.set_owner(owner)
 
                 self.characters.append(dnd_character)
 

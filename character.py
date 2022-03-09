@@ -16,6 +16,7 @@ class Character:
                             "Intimidation": 0, "Investigation": 0, "Medicine": 0,
                             "Nature": 0, "Perception": 0, "Performance": 0, "Persuasion": 0,
                             "Religion": 0, "Slight of Hand": 0, "Stealth": 0, "Survival": 0}
+        self.owner = 0
 
     def get_attributes(self):
         return self.attributes
@@ -34,6 +35,9 @@ class Character:
 
     def get_character_skills(self):
         return self.character_skills
+
+    def get_owner(self):
+        return self.owner
 
     def get_data(self, indices):
         data = []
@@ -70,3 +74,6 @@ class Character:
 
     def set_character_skills(self, character_skills):
         self.character_skills = character_skills
+
+    def set_owner(self, owner):
+        self.owner = owner

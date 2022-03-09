@@ -58,7 +58,6 @@ class CharacterStats(commands.Cog):
         
         # Create embeds for each type of data
         await ctx.send(f"Data for \"{name}\"")
-        print(data_indices)
 
         data_indices.sort()
         character_data = character.get_data(data_indices)
@@ -70,21 +69,27 @@ class CharacterStats(commands.Cog):
 
             await ctx.send(embed=embed)
 
-    """
-    If the user forgot to enter a name, catch the error and remind them
-    """
+    @commands.command(brief="Claim a character")
+    async def claim(self, ctx, name):
+        if self.processor.character_exists(name):
+            character = self.processor.get_character(name)
+            owner_id = character.get_owner()
+
+            if owner_id != 0:
+                owner = await self.bot.fetch_user(owner_id)
+                await ctx.send(f"\"{name}\" is already claimed by {owner}!")
+
+            else:
+                character.set_owner(ctx.author.id)
+                await ctx.send(f"You now own \"{name}\"!")
+
     @showcharstats.error
-    async def showcharstats_error(self, ctx, error):
+    @claim.error
+    async def error_handler(self, ctx, error):
         if isinstance(error, commands.errors.MissingRequiredArgument):
             await ctx.send("Please add the character's name after the command!")
         else:
-            await ctx.send(error)
-
-"""
-    @commands.command(brief="Claim a character")
-    async def claim(self, ctx, name):
-        if self.file_editor.character_exists(name):
-"""           
+            await ctx.send(error)           
     
 
 
