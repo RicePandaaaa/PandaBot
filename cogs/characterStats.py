@@ -38,20 +38,18 @@ class CharacterStats(commands.Cog):
         # Character was not found with the given name
         if not self.processor.character_exists(name):
             await ctx.send(f"No character was found with the name \"{name}\"")
+            return
 
         character = self.processor.get_character(name)
 
         data_indices = []
         if len(indices) > 0:
-            try:
-                for index in indices:
-                    data_index = int(index)
-                    if data_index > len(self.types_of_data):
-                        raise Exception("Invalid argument", "Invalid indices given.")
-                    data_indices.append(data_index)
-            except:
-                await ctx.send("Invalid indices given.")
-                return
+            for index in indices:
+                data_index = int(index)
+                if data_index > len(self.types_of_data) or 0 > data_index:
+                    await ctx.send(f"Invalid index found: {data_index}")
+                    return
+                data_indices.append(data_index)
 
         else:
             data_indices = [index for index in range(len(self.types_of_data))]
