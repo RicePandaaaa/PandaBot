@@ -1,9 +1,9 @@
 import character
-import pandas
+import pandas as pd
 
 class Processor():
     def __init__(self):
-        self.characters = []
+        self.characters = {}
         self.load_data()
 
     def load_data(self):
@@ -26,11 +26,10 @@ class Processor():
                             "Religion": 0, "Slight of Hand": 0, "Stealth": 0, "Survival": 0}
 
         # Create the character object for each character in the file
-        df = pandas.read_csv("cogs/characterList.csv")
+        df = pd.read_csv("cogs/characterList.csv")
 
         for index in df.index:
             dnd_character = character.Character()
-            print(df.loc[index])
 
             for attribute in attributes:
                 attributes[attribute] = df.loc[index, attribute]
@@ -61,19 +60,15 @@ class Processor():
             dnd_character.set_character_skills(character_skills)
             dnd_character.set_owner(owner)
 
-            self.characters.append(dnd_character)
-            print(self.characters[0].get_attributes())
+            self.characters[attributes["Name"]] = dnd_character
+
+        # Change the dictionary into a DataFrame
+        self.characters = pd.DataFrame([self.characters])
+
+        print(self.characters)
 
     def character_exists(self, name):
-        for character in self.characters:
-            if character.get_attributes()["Name"] == name:
-                return True
-
-        return False
+        return name in self.characters.columns
 
     def get_character(self, name):
-        for character in self.characters:
-            if character.get_attributes()["Name"] == name:
-                return character
-
-        return None
+        return self.characters.loc[0, name]
