@@ -1,6 +1,5 @@
-import csv
-from tkinter import dnd
 import character
+import pandas
 
 class Processor():
     def __init__(self):
@@ -27,42 +26,43 @@ class Processor():
                             "Religion": 0, "Slight of Hand": 0, "Stealth": 0, "Survival": 0}
 
         # Create the character object for each character in the file
-        with open("./cogs/characterList.csv") as csvfile:
-            reader = csv.DictReader(csvfile)
+        df = pandas.read_csv("cogs/characterList.csv")
 
-            for row in reader:
-                dnd_character = character.Character()
+        for index in df.index:
+            dnd_character = character.Character()
+            print(df.loc[index])
 
-                for attribute in attributes:
-                    attributes[attribute] = row[attribute]
+            for attribute in attributes:
+                attributes[attribute] = df.loc[index, attribute]
 
-                for skill in skill_points:
-                    skill_points[skill] = row[skill]
+            for skill in skill_points:
+                skill_points[skill] = df.loc[index, skill]
 
-                for optional in dm_optionals:
-                    dm_optionals[optional] = row[optional]
+            for optional in dm_optionals:
+                dm_optionals[optional] = df.loc[index, optional]
 
-                for attribute in health_and_armor:
-                    health_and_armor[attribute] = row[attribute]
+            for attribute in health_and_armor:
+                health_and_armor[attribute] = df.loc[index, attribute]
 
-                for throw in saving_throws:
-                    saving_throws[throw] = row[throw]
+            for throw in saving_throws:
+                saving_throws[throw] = df.loc[index, throw]
 
-                for character_skill in character_skills:
-                    character_skills[character_skill] = row[character_skill]
+            for character_skill in character_skills:
+                character_skills[character_skill] = df.loc[index, character_skill]
 
-                owner = int(row["Owner"])
+            owner = df.loc[index, "Owner"]
 
-                # Update the character from default values
-                dnd_character.set_attributes(attributes)
-                dnd_character.set_skill_points(skill_points)
-                dnd_character.set_dm_optionals(dm_optionals)
-                dnd_character.set_health_and_armor(health_and_armor)
-                dnd_character.set_saving_throws(saving_throws)
-                dnd_character.set_character_skills(character_skills)
-                dnd_character.set_owner(owner)
+            # Update the character from default values
+            dnd_character.set_attributes(attributes)
+            dnd_character.set_skill_points(skill_points)
+            dnd_character.set_dm_optionals(dm_optionals)
+            dnd_character.set_health_and_armor(health_and_armor)
+            dnd_character.set_saving_throws(saving_throws)
+            dnd_character.set_character_skills(character_skills)
+            dnd_character.set_owner(owner)
 
-                self.characters.append(dnd_character)
+            self.characters.append(dnd_character)
+            print(self.characters[0].get_attributes())
 
     def character_exists(self, name):
         for character in self.characters:
