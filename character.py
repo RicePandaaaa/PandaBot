@@ -1,6 +1,11 @@
 class Character:
     def __init__(self):
-        self.attributes = {"Class & Level": "", "Name": "", "Background": "",
+        self.data_types = ["Name", "Class & Level", "Background", "Race", "Alignment", "Experience Points",
+                           "Strength", "Dexerity", "Constitution", "Intelligence", "Wisdom", "Charisma",
+                           "Passive Wisdom (Perception)", "Inspiration", "Proficiency Bonus", "Armor Class"]
+
+
+        self.attributes = {"Name": "", "Class & Level": "", "Background": "",
                     "Race": "", "Alignment": "", "Experience Points": ""}
         self.skill_points = {"Strength": 0, "Dexterity": 0, "Constitution": 0,
                         "Intelligence": 0, "Wisdom": 0, "Charisma": 0}
@@ -57,23 +62,38 @@ class Character:
 
         return data
 
+    def get_all_data(self):
+        data = [self.attributes, self.skill_points, self.dm_optionals, self.health_and_armor,
+                self.saving_throws, self.character_skills, {"Owner": self.owner}]
+
+        return data
+
     def set_attributes(self, attributes):
-        self.attributes = attributes
+        for key in self.attributes.keys():
+            self.attributes[key] = attributes[key]
 
     def set_skill_points(self, skill_points):
-        self.skill_points = skill_points
+        for key in self.skill_points.keys():
+            self.skill_points[key] = skill_points[key]
 
     def set_dm_optionals(self, dm_optionals):
-        self.dm_optionals = dm_optionals
+        for key in self.dm_optionals.keys():
+            self.dm_optionals[key] = dm_optionals[key]
 
     def set_health_and_armor(self, health_and_armor):
-        self.health_and_armor = health_and_armor
+        for key in self.health_and_armor.keys():
+            self.health_and_armor[key] = health_and_armor[key]
 
     def set_saving_throws(self, saving_throws):
-        self.saving_throws = saving_throws
+        for key in self.saving_throws.keys():
+            self.saving_throws[key] = saving_throws[key]
 
     def set_character_skills(self, character_skills):
-        self.character_skills = character_skills
+        for key in self.character_skills.keys():
+            self.character_skills[key] = character_skills[key]
 
     def set_owner(self, owner):
         self.owner = owner
+
+    def remove_owner(self):
+        self.owner = 0

@@ -1,14 +1,25 @@
 import character
+import csv
 import pandas as pd
 
 class Processor():
     def __init__(self):
         self.characters = {}
+        self.stats_names = ["Name", "Class & Level", "Background", "Race", "Alignment", "Experience Points",
+                            "Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma",
+                            "Passive Wisdom (Perception)", "Inspiration", "Proficiency Bonus", "Armor Class",
+                            "Initiative", "Speed", "Max HP", "Current HP", "Temporary HP", "Hit Dice",
+                            "Death Save Successes", "Death Save Fails", "Strength (Save)", "Dexterity (Save)",
+                            "Constitution (Save)", "Intelligence (Save)", "Wisdom (Save)", "Charisma (Save)",
+                            "Acrobatics", "Animal Handling", "Arcana", "Athletics", "Deception", "History",
+                            "Insight", "Intimidation", "Investigation", "Medicine", "Nature", "Perception",
+                            "Performance", "Persuasion", "Religion", "Slight of Hand", "Stealth", "Survival",
+                            "Owner"]
         self.load_data()
 
     def load_data(self):
         # Dictionaries to hold the data
-        attributes = {"Class & Level": "", "Name": "", "Background": "",
+        attributes = {"Name": "", "Class & Level": "", "Background": "",
                     "Race": "", "Alignment": "", "Experience Points": ""}
         skill_points = {"Strength": 0, "Dexterity": 0, "Constitution": 0,
                         "Intelligence": 0, "Wisdom": 0, "Charisma": 0}
@@ -62,13 +73,23 @@ class Processor():
 
             self.characters[attributes["Name"]] = dnd_character
 
-        # Change the dictionary into a DataFrame
-        self.characters = pd.DataFrame([self.characters])
+        self.save_data()
 
-        print(self.characters)
+
+    def save_data(self):
+        with open("cogs/characterList.csv", "w", newline='') as file:
+            csvWriter = csv.writer(file, delimiter=",")
+            csvWriter.writerow(self.stats_names)
+
+            for character_name in self.characters.keys():
+                charData = self.get_character(character_name).get_all_data()
+                dataRow = [list(l.values()) for l in charData]
+                dataRow = [item for sublist in dataRow for item in sublist]
+
+                csvWriter.writerow(dataRow)
 
     def character_exists(self, name):
-        return name in self.characters.columns
+        return name in self.characters.keys()
 
     def get_character(self, name):
-        return self.characters.loc[0, name]
+        return self.characters[name]

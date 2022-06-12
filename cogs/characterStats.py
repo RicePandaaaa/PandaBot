@@ -1,3 +1,4 @@
+from ast import alias
 import discord
 from discord.ext import commands
 
@@ -33,7 +34,7 @@ class CharacterStats(commands.Cog):
                 3) Defensive Attributes
                 4) Saving Throws
                 5) Character Skills
-                """)
+                """, aliases=["stats", "scs"])
     async def showcharstats(self, ctx, name, *indices):
         # Character was not found with the given name
         if not self.processor.character_exists(name):
@@ -80,9 +81,25 @@ class CharacterStats(commands.Cog):
             else:
                 character.set_owner(ctx.author.id)
                 await ctx.send(f"You now own \"{name}\"!")
+                self.processor.save_data()
+
+    @commands.command(brief="Unclaim a character")
+    async def unclaim(self, ctx, name):
+        if self.processor.character_exists(name):
+            character = self.processor.get_character(name)
+            owner_id = character.get_owner()
+
+            if owner_id != ctx.author.id:
+                await ctx.send(f"\"{name}\" is not claimed by you!")
+
+            else:
+                character.remove_owner()
+                await ctx.send(f"You now no longer own \"{name}\"!")
+                self.processor.save_data()
 
     @showcharstats.error
     @claim.error
+    @unclaim.error
     async def error_handler(self, ctx, error):
         if isinstance(error, commands.errors.MissingRequiredArgument):
             await ctx.send("Please add the character's name after the command!")
