@@ -96,6 +96,13 @@ class CharacterStats(commands.Cog):
                 await ctx.send(f"You now no longer own \"{name}\"!")
                 self.processor.save_data()
 
+    @commands.command()
+    async def checkchars(self, ctx):
+        characters = self.processor.get_characters_by_id(ctx.author.id)
+        if characters is not None:
+            for char in characters:
+                await ctx.send(repr(char))
+
     @showcharstats.error
     @claim.error
     @unclaim.error

@@ -93,3 +93,9 @@ class Processor():
 
     def get_character(self, name):
         return self.characters[name]
+
+    def get_characters_by_id(self, id):
+        if id in self.characters:
+            return self.characters[id]
+
+        return None
