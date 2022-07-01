@@ -1,4 +1,5 @@
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 import dataProcessor
@@ -67,8 +68,9 @@ class CharacterStats(commands.Cog):
 
             await ctx.send(embed=embed)
 
-    @commands.command(brief="Claim a character",
+    @commands.hybrid_command(brief="Claim a character",
                       description="Claim a character by name if it exists, making you its owner")
+    @app_commands.guilds(discord.Object(id=824092658574032907))
     async def claim(self, ctx, name):
         # Check that the character exists
         if self.processor.character_exists(name):
@@ -86,8 +88,9 @@ class CharacterStats(commands.Cog):
                 await ctx.send(f"You now own \"{name}\"!")
                 self.processor.save_data()
 
-    @commands.command(brief="Unclaim a character",
+    @commands.hybrid_command(brief="Unclaim a character",
                       description="Unclaim a character that you own, setting its owner to no one")
+    @app_commands.guilds(discord.Object(id=824092658574032907))
     async def unclaim(self, ctx, name):
         # Check if the character exists
         if self.processor.character_exists(name):
@@ -104,23 +107,14 @@ class CharacterStats(commands.Cog):
                 await ctx.send(f"You now no longer own \"{name}\"!")
                 self.processor.save_data()
 
-    @commands.command(brief="Check your characters",
+    @commands.hybrid_command(brief="Check your characters",
                       description="Retrieve a list of characters that you own, if any")
+    @app_commands.guilds(discord.Object(id=824092658574032907))
     async def checkchars(self, ctx):
         characters = self.processor.get_characters_by_id(ctx.author.id)
         if characters is not None:
             for char in characters:
-                await ctx.send(repr(char))
-
-    @showcharstats.error
-    @claim.error
-    @unclaim.error
-    async def error_handler(self, ctx, error):
-        if isinstance(error, commands.errors.MissingRequiredArgument):
-            await ctx.send("Please add the character's name after the command!")
-        else:
-            await ctx.send(error)           
-    
+                await ctx.send(repr(char))        
 
 
 async def setup(bot):
