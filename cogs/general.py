@@ -17,27 +17,31 @@ class General(commands.Cog):
     async def rulebook(self, ctx):
         await ctx.send("The player's handbook can be seen online at http://online.anyflip.com/dkneq/yerq/mobile/index.html#p=1")
 
-    @commands.command(aliases=["time"])
+    @commands.command(brief="Get the current time", description="Get the current time in UTC", aliases=["time"])
     async def clock(self, ctx):
         current_time = datetime.now(timezone.utc).strftime("%H:%M:%S")
         await ctx.send(f"The time in UTC is: {current_time}")
 
-    @commands.command()
+    @commands.command(brief="Set a timer", description="Set a timer with a maximum of 3600 seconds")
     async def timer(self, ctx, seconds):
+        # Set variables
         self.timer_start = time.monotonic()
         self.timer_length = int(seconds)
         self.channel = self.bot.get_channel(ctx.channel.id)
         await ctx.send(f"Now starting a timer for {seconds} seconds.")
+
+        # Start the timer
         self.timerLoop.start()
 
     @tasks.loop()
     async def timerLoop(self):
         current_seconds = time.monotonic()
+        # Check if the elapsed time has been at least met
         if current_seconds - self.timer_start >= self.timer_length:
             await self.channel.send("Timer is up!")
             self.timerLoop.cancel()
 
 
     
-def setup(bot):
-    bot.add_cog(General(bot))
+async def setup(bot):
+    await bot.add_cog(General(bot))

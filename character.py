@@ -4,7 +4,7 @@ class Character:
                            "Strength", "Dexerity", "Constitution", "Intelligence", "Wisdom", "Charisma",
                            "Passive Wisdom (Perception)", "Inspiration", "Proficiency Bonus", "Armor Class"]
 
-
+        # Dictionaries of data
         self.attributes = {"Name": "", "Class & Level": "", "Background": "",
                     "Race": "", "Alignment": "", "Experience Points": ""}
         self.skill_points = {"Strength": 0, "Dexterity": 0, "Constitution": 0,
@@ -23,6 +23,11 @@ class Character:
                             "Religion": 0, "Slight of Hand": 0, "Stealth": 0, "Survival": 0}
         self.owner = 0
 
+    """
+    +-------+
+    |GETTERS|
+    +-------+
+    """
     def get_attributes(self):
         return self.attributes
 
@@ -68,6 +73,11 @@ class Character:
 
         return data
 
+    """
+    +-------+
+    |SETTERS|
+    +-------+
+    """
     def set_attributes(self, attributes):
         for key in self.attributes.keys():
             self.attributes[key] = attributes[key]

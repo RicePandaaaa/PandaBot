@@ -81,6 +81,7 @@ class Processor():
             csvWriter = csv.writer(file, delimiter=",")
             csvWriter.writerow(self.stats_names)
 
+            # Write each character's data into a csv row
             for character_name in self.characters.keys():
                 charData = self.get_character(character_name).get_all_data()
                 dataRow = [list(l.values()) for l in charData]

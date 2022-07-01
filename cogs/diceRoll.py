@@ -1,4 +1,4 @@
-import discord
+from discord import app_commands
 from random import randint
 from discord.ext import commands
 
@@ -30,5 +30,5 @@ class DiceRoll(commands.Cog):
 
 
 
-def setup(bot):
-    bot.add_cog(DiceRoll(bot))
+async def setup(bot):
+    await bot.add_cog(DiceRoll(bot))
