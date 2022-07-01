@@ -6,7 +6,6 @@ import dataProcessor
 class CharacterStats(commands.Cog):
 
     def __init__(self, bot):
-        print("HI")
         self.bot = bot
         self.types_of_data = ["General Attributes", "Skill Points", "Dungeon Master Optional Points", 
                              "Defensive Attributes", "Saving Throws", "Character Skills"]
