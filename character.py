@@ -110,4 +110,4 @@ class Character:
 
     def __repr__(self):
         owner = "no one" if self.owner == 0 else f"<@{self.owner}>"
-        return f"Character Name: {self.attributes['Name']}, owned by f{owner}"
+        return f"Character Name: {self.attributes['Name']}, owned by {owner}"

@@ -96,7 +96,10 @@ class Processor():
         return self.characters[name]
 
     def get_characters_by_id(self, id):
-        if id in self.characters:
-            return self.characters[id]
+        owned_characters = []
 
-        return None
+        for character in self.characters.keys():
+            if self.characters[character].get_owner() == id:
+                owned_characters.append(self.characters[character])
+
+        return owned_characters

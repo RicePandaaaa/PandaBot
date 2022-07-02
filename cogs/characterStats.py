@@ -1,6 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+from numpy import empty
 
 import dataProcessor
 
@@ -112,9 +113,11 @@ class CharacterStats(commands.Cog):
     @app_commands.guilds(discord.Object(id=824092658574032907))
     async def checkchars(self, ctx):
         characters = self.processor.get_characters_by_id(ctx.author.id)
-        if characters is not None:
+        if len(characters) > 0:
             for char in characters:
-                await ctx.send(repr(char))        
+                await ctx.send(repr(char))
+        else:
+            await ctx.send("You don't own anyone.")        
 
 
 async def setup(bot):
