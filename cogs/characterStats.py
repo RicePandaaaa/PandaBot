@@ -183,9 +183,6 @@ class CharacterStats(commands.Cog):
                         character.get_health_and_armor()["Temporary HP"] = str(shield)
                         character.get_health_and_armor()["Current HP"] = str(health)
 
-                    print(charPoints)
-                    print(character.get_health_and_armor())
-
             if not found:
                 ctx.send(f"{name} could not be found! Are you sure {owner} owns this character?")
  
