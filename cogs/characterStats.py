@@ -137,6 +137,7 @@ class CharacterStats(commands.Cog):
                 await ctx.send(f"{owner} does not have a character!")
                 return
             
+            messages = []
             # Verify character exists
             found = False
             for character in characters:
@@ -155,7 +156,7 @@ class CharacterStats(commands.Cog):
                         new_health = health + points
                         new_health = str(min(new_health, max_health))
                         character.get_health_and_armor()["Current HP"] = new_health
-                        await ctx.send(f"{name} has been healed to {new_health}/{max_health} HP!")
+                        messages.append(f"{name} has been healed to {new_health}/{max_health} HP!")
 
                     # Damaging
                     else:
@@ -166,25 +167,28 @@ class CharacterStats(commands.Cog):
                                 old_shield = shield
                                 shield += points
                                 points += old_shield
-                                await ctx.send(f"{name}'s shield/overheal/temporary shield has been removed!")
+                                messages.append(f"{name}'s shield/overheal/temporary shield has been removed!")
 
                             else:
                                 shield += points
-                                await ctx.send(f"{name}'s shield/overheal/temporary shield has been reduced to {shield}!")
+                                messages.append(f"{name}'s shield/overheal/temporary shield has been reduced to {shield}!")
                                 points = 0
 
                         if points < 0:
                             health = max(0, health + points)
-                            await ctx.send(f"{name}'s health has been reduced to {health}/{max_health}!")
+                            messages.append(f"{name}'s health has been reduced to {health}/{max_health}!")
                             # Check for knock down
                             if health <= 0:
-                                await ctx.send(f"{name} has been knocked down!")
+                                messages.append(f"{name} has been knocked down!")
 
                         character.get_health_and_armor()["Temporary HP"] = str(shield)
                         character.get_health_and_armor()["Current HP"] = str(health)
 
+                    output_message = "\n".join(messages)
+                    await ctx.send(output_message)
+
             if not found:
-                ctx.send(f"{name} could not be found! Are you sure {owner} owns this character?")
+                await ctx.send(f"{name} could not be found! Are you sure {owner} owns this character?")
  
 async def setup(bot):
     await bot.add_cog(CharacterStats(bot))
