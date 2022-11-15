@@ -3,7 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 import sqlite3
 
-import sqlite3
+import page_flip
 
 class Mobs(commands.Cog):
     def __init__(self, bot):
@@ -50,6 +50,7 @@ class Mobs(commands.Cog):
     async def filtermobs(self, ctx, *, args):
         # Split up the arguments
         args = [x for x in args.split(" ") if x != ""]
+        print(args)
 
         # Need a non zero, even amount of strings
         if len(args) % 2 != 0 or len(args) == 0:
@@ -78,17 +79,28 @@ class Mobs(commands.Cog):
                     await ctx.send(f"{filter_field} is not a valid field.")
                     return
 
-                command_filters.append(f"{filter_field}={filters[filter_field]}")
+                field_value = filters[filter_field]
+                if not field_value.isnumeric():
+                    field_value = f'"{field_value}"'
+                command_filters.append(f"{filter_field}={field_value}")
 
             # Create the full command
-            command += "AND".join(command_filters) + " COLLATE NOCASE"
+            command += " AND ".join(command_filters) + " COLLATE NOCASE"
 
             # Execute the command
             results = self.cur.execute(command)
             data_values = results.fetchall()
             
             # Create the embed
+            items = [monster[0] for monster in data_values]
+            page_flip_view = page_flip.PageFlip("Results after Filtering", "Names", items)
             
+            embed = discord.Embed(color=discord.Color.random())
+            embed.set_author(name="Results after Filtering")
+            embed.add_field(name="Names", value="\n".join(items[0 : min(15, len(items))]))
+
+            await ctx.send(embed=embed, view=page_flip_view)
+
 
 
     @commands.hybrid_command(brief="Get attributes",
