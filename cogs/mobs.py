@@ -14,10 +14,14 @@ class Mobs(commands.Cog):
         self.con = sqlite3.connect(self.db_file)
         self.cur = self.con.cursor()
 
+        # List of keys for ease of accessibility
+        self.data_keys = ["Name", "Size", "Type", "Alignment", "AC", "HP", "Speeds", "STR", "DEX", "CON", "INT", "WIS",
+                         "CHA", "Saving Throws", "Skills", "WRI", "Senses", "Languages", "CR", "Additional", "Font", "Additional Info", "Author"]
+
     @commands.hybrid_command(brief="Mob information",
                       description="Get information on a specific mob")
     @app_commands.guilds(discord.Object(id=824092658574032907))
-    async def mobinfo(self, ctx, name):
+    async def mobinfo(self, ctx, name: str):
         results = self.cur.execute(f"SELECT * from monsters WHERE Name = \"{name}\" COLLATE NOCASE")
         data_values = results.fetchall()
 
@@ -25,22 +29,72 @@ class Mobs(commands.Cog):
             await ctx.send(f"{name} does not exist in my database.")
 
         else:
-            data_keys = ["Name", "Size", "Type", "Alignment", "AC", "HP", "Speeds", "STR", "DEX", "CON", "INT", "WIS",
-                         "CHA", "Saving Throws", "Skills", "WRI", "Senses", "Languages", "CR", "Additional", "Font", "Additional Info", "Author"]
             data_values = data_values[0]
 
             # Make three embeds
             embedOne = discord.Embed(title=f"Data for {data_values[0]}")
             for i in range(1, 15):
-                embedOne.add_field(name=data_keys[i], value=data_values[i])
+                embedOne.add_field(name=self.data_keys[i], value=data_values[i])
 
             embedTwo = discord.Embed(title=f"Even more data for {data_values[0]}")
             for i in range(15, 23):
-                if data_keys[i] != "Additional Info":
-                    embedTwo.add_field(name=data_keys[i], value=data_values[i])
+                if self.data_keys[i] != "Additional Info":
+                    embedTwo.add_field(name=self.data_keys[i], value=data_values[i])
 
             await ctx.send(embed=embedOne)
             await ctx.send(embed=embedTwo)
+    
+    @commands.hybrid_command(brief="Get mobs after filter",
+                      description="Get names of all mobs whose stats match the given filters")
+    @app_commands.guilds(discord.Object(id=824092658574032907))
+    async def filtermobs(self, ctx, *, args):
+        # Split up the arguments
+        args = [x for x in args.split(" ") if x != ""]
+
+        # Need a non zero, even amount of strings
+        if len(args) % 2 != 0 or len(args) == 0:
+            await ctx.send("Missing filter data. Please try again.")
+        # Can't be more than the maximum amount of fields though
+        elif len(args) > len(self.data_keys) * 2:
+            await ctx.send("Too many filters asked for. Please try again.")
+        else:
+            command = "SELECT * FROM monsters WHERE "
+            
+            # Put everything into a dictionary
+            filters = {}
+            for index in range(0, len(args)-1, 2):
+                filters[args[index]] = args[index+1]
+
+            filter_fields = list(filters.keys())
+            # Check if the given fields are valid
+            command_filters = []
+            for filter_field in filter_fields:
+                found = False
+                for data_field in self.data_keys:
+                    if filter_field.lower() == data_field.lower():
+                        found = True
+
+                if not found:
+                    await ctx.send(f"{filter_field} is not a valid field.")
+                    return
+
+                command_filters.append(f"{filter_field}={filters[filter_field]}")
+
+            # Create the full command
+            command += "AND".join(command_filters) + " COLLATE NOCASE"
+
+            # Execute the command
+            results = self.cur.execute(command)
+            data_values = results.fetchall()
+            
+            # Create the embed
+            
+
+
+    @commands.hybrid_command(brief="Get attributes",
+                      description="Get all attributes a mob can have")
+    async def getattributes(self, ctx):
+        await ctx.send(", ".join(self.data_keys))
 
 
 async def setup(bot):
