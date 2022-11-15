@@ -32,7 +32,7 @@ class CharacterStats(commands.Cog):
                 4) Saving Throws
                 5) Character Skills
                 """, aliases=["stats", "scs"])
-    async def showcharstats(self, ctx, name, *indices):
+    async def showcharstats(self, ctx, name: str, *indices):
         # Character was not found with the given name
         if not self.processor.character_exists(name):
             await ctx.send(f"No character was found with the name \"{name}\"")
@@ -71,7 +71,7 @@ class CharacterStats(commands.Cog):
     @commands.hybrid_command(brief="Claim a character",
                       description="Claim a character by name if it exists, making you its owner")
     @app_commands.guilds(discord.Object(id=824092658574032907))
-    async def claim(self, ctx, name):
+    async def claim(self, ctx, name: str):
         # Check that the character exists
         if self.processor.character_exists(name):
             character = self.processor.get_character(name)
@@ -91,7 +91,7 @@ class CharacterStats(commands.Cog):
     @commands.hybrid_command(brief="Unclaim a character",
                       description="Unclaim a character that you own, setting its owner to no one")
     @app_commands.guilds(discord.Object(id=824092658574032907))
-    async def unclaim(self, ctx, name):
+    async def unclaim(self, ctx, name: str):
         # Check if the character exists
         if self.processor.character_exists(name):
             character = self.processor.get_character(name)
@@ -110,7 +110,7 @@ class CharacterStats(commands.Cog):
     @commands.hybrid_command(brief="Check your characters",
                       description="Retrieve a list of characters that you own, if any")
     @app_commands.guilds(discord.Object(id=824092658574032907))
-    async def checkchars(self, ctx):
+    async def checkchars(self, ctx: str):
         characters = self.processor.get_characters_by_id(ctx.author.id)
         if len(characters) > 0:
             for char in characters:
@@ -120,7 +120,7 @@ class CharacterStats(commands.Cog):
 
     @commands.hybrid_command(brief="Damage or heal a character")
     @app_commands.guilds(discord.Object(id=824092658574032907))
-    async def changecharhp(self, ctx, owner, name, pointstr):
+    async def changecharhp(self, ctx, owner: str, name: str, pointstr: str):
         try:
             # Check for points being a number and non zero
             points = int(pointstr)

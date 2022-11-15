@@ -9,7 +9,7 @@ class Probability(commands.Cog):
 
     @commands.hybrid_command()
     @app_commands.guilds(discord.Object(id=824092658574032907))
-    async def roll(self, ctx, sides: int, modifier: int=0, numofrolls: int=1):
+    async def roll(self, ctx: commands.Context, sides: int, modifier: int=0, numofrolls: int=1):
         if numofrolls > 100:
             await ctx.send("You can only do up to 100 dice rolls at one time.")
 
@@ -23,7 +23,7 @@ class Probability(commands.Cog):
 
     @commands.hybrid_command()
     @app_commands.guilds(discord.Object(id=824092658574032907))
-    async def coinflip(self, ctx, numofflips=1):
+    async def coinflip(self, ctx: commands.Context, numofflips: int=1):
         if numofflips > 100:
             await ctx.send("You're only allowed a max of 100 flips at one time.")
         
@@ -45,7 +45,7 @@ class Probability(commands.Cog):
 
     @commands.hybrid_command()
     @app_commands.guilds(discord.Object(id=824092658574032907))
-    async def rng(self, ctx, min=1, max=20, numofnumbers=1):
+    async def rng(self, ctx: commands.Context, min: int=1, max: int=20, numofnumbers: int=1):
         if numofnumbers > 100:
             await ctx.send("You're only allowed a max of 100 numbers generated at one time.")
 

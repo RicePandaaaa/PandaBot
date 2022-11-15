@@ -49,7 +49,7 @@ class Character:
     def get_owner(self):
         return self.owner
 
-    def get_data(self, indices):
+    def get_data(self, indices: list[int]):
         data = []
 
         if 0 in indices:
@@ -78,31 +78,31 @@ class Character:
     |SETTERS|
     +-------+
     """
-    def set_attributes(self, attributes):
+    def set_attributes(self, attributes: dict):
         for key in self.attributes.keys():
             self.attributes[key] = attributes[key]
 
-    def set_skill_points(self, skill_points):
+    def set_skill_points(self, skill_points: dict):
         for key in self.skill_points.keys():
             self.skill_points[key] = skill_points[key]
 
-    def set_dm_optionals(self, dm_optionals):
+    def set_dm_optionals(self, dm_optionals: dict):
         for key in self.dm_optionals.keys():
             self.dm_optionals[key] = dm_optionals[key]
 
-    def set_health_and_armor(self, health_and_armor):
+    def set_health_and_armor(self, health_and_armor: dict):
         for key in self.health_and_armor.keys():
             self.health_and_armor[key] = health_and_armor[key]
 
-    def set_saving_throws(self, saving_throws):
+    def set_saving_throws(self, saving_throws: dict):
         for key in self.saving_throws.keys():
             self.saving_throws[key] = saving_throws[key]
 
-    def set_character_skills(self, character_skills):
+    def set_character_skills(self, character_skills: dict):
         for key in self.character_skills.keys():
             self.character_skills[key] = character_skills[key]
 
-    def set_owner(self, owner):
+    def set_owner(self, owner: int):
         self.owner = owner
 
     def remove_owner(self):

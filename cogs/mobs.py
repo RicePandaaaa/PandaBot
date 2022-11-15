@@ -21,7 +21,7 @@ class Mobs(commands.Cog):
     @commands.hybrid_command(brief="Mob information",
                       description="Get information on a specific mob")
     @app_commands.guilds(discord.Object(id=824092658574032907))
-    async def mobinfo(self, ctx, name: str):
+    async def mobinfo(self, ctx: commands.Context, name: str):
         results = self.cur.execute(f"SELECT * from monsters WHERE Name = \"{name}\" COLLATE NOCASE")
         data_values = results.fetchall()
 
@@ -47,7 +47,7 @@ class Mobs(commands.Cog):
     @commands.hybrid_command(brief="Get mobs after filter",
                       description="Get names of all mobs whose stats match the given filters")
     @app_commands.guilds(discord.Object(id=824092658574032907))
-    async def filtermobs(self, ctx, *, args):
+    async def filtermobs(self, ctx: commands.Context, *, args):
         # Split up the arguments
         args = [x for x in args.split(" ") if x != ""]
         print(args)
@@ -105,7 +105,7 @@ class Mobs(commands.Cog):
 
     @commands.hybrid_command(brief="Get attributes",
                       description="Get all attributes a mob can have")
-    async def getattributes(self, ctx):
+    async def getattributes(self, ctx: commands.Context):
         await ctx.send(", ".join(self.data_keys))
 
 

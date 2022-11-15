@@ -16,7 +16,7 @@ class General(commands.Cog):
 
     @commands.hybrid_command(aliases=["rb", "ph"])
     @app_commands.guilds(discord.Object(id=824092658574032907))
-    async def rulebook(self, ctx):
+    async def rulebook(self, ctx: Context):
         await ctx.send("The player's handbook can be seen online at http://online.anyflip.com/dkneq/yerq/mobile/index.html#p=1")
 
     @commands.hybrid_command(brief="Get the current time", description="Get the current time in UTC", aliases=["time"])
@@ -27,7 +27,7 @@ class General(commands.Cog):
 
     @commands.hybrid_command(brief="Set a timer", description="Set a timer with a maximum of 3600 seconds")
     @app_commands.guilds(discord.Object(id=824092658574032907))
-    async def timer(self, ctx, seconds):
+    async def timer(self, ctx: Context, seconds: str):
         # Set variables
         self.timer_start = time.monotonic()
         self.timer_length = int(seconds)

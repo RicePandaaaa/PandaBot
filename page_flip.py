@@ -1,7 +1,7 @@
 import discord
 
 class PageFlip(discord.ui.View):
-    def __init__(self, embed_title, category, items):
+    def __init__(self, embed_title: str, category: str, items: list[str]):
         super().__init__()
         self.value = None
         self.color = discord.Color.random()
