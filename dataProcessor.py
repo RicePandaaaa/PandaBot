@@ -89,10 +89,10 @@ class Processor():
 
                 csvWriter.writerow(dataRow)
 
-    def character_exists(self, name):
+    def character_exists(self, name: str) -> bool:
         return name in self.characters.keys()
 
-    def get_character(self, name):
+    def get_character(self, name: str):
         return self.characters[name]
 
     def get_characters_by_id(self, id):

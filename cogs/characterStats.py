@@ -12,6 +12,7 @@ class CharacterStats(commands.Cog):
                              "Defensive Attributes", "Saving Throws", "Character Skills"]
         self.processor = dataProcessor.Processor()
 
+
     @commands.command(brief="Shows all or some of the data for a character", 
                 description="""
                 Accepted arguments:
@@ -118,77 +119,52 @@ class CharacterStats(commands.Cog):
         else:
             await ctx.send("You don't own anyone.")        
 
-    @commands.hybrid_command(brief="Damage or heal a character")
+    @commands.hybrid_command(brief="Alter stats of a character")
     @app_commands.guilds(discord.Object(id=824092658574032907))
-    async def changecharhp(self, ctx, owner: str, name: str, pointstr: str):
-        try:
-            # Check for points being a number and non zero
-            points = int(pointstr)
-            if points == 0:
-                await ctx.send(f"{points} cannot be 0")
-                return
-        except:
-            # If points is not a number
-            await ctx.send("The number of points must be an integer.")
-        else:
-            # Verify owner has characters
-            characters = self.processor.get_characters_by_id(int(owner[3:-1]))
-            if len(characters) == 0:
-                await ctx.send(f"{owner} does not have a character!")
-                return
+    async def changecharhp(self, ctx, owner: int, name: str, damage: int):
+        # Check for non positive damage
+        if damage == 0:
+            await ctx.send(f"Damage cannot be less or equal than zero!")
+            return
+
+        # Verify owner has characters
+        characters = self.processor.get_characters_by_id(int(owner[3:-1]))
+        if len(characters) == 0:
+            await ctx.send(f"{owner} does not have a character!")
+            return
             
-            messages = []
-            # Verify character exists
-            found = False
-            for character in characters:
-                # Change health accordingly
-                if character.get_attributes()["Name"] == name:
-                    found = True
-                    charPoints = character.get_health_and_armor()
-                    
-                    # Get health points
-                    shield = int(charPoints["Temporary HP"])
-                    health = int(charPoints["Current HP"])
-                    max_health = int(charPoints["Max HP"])
+        messages = []
+        # Verify character exists
+        found = False
+        for character in characters:
+            # Change health accordingly
+            if character.get_attributes()["Name"] == name:
+                found = True
+                charPoints = character.get_health_and_armor()
+                
+                # Get health points
+                overshield = int(charPoints["Temporary HP"])
+                health = int(charPoints["Current HP"])
+                remaining_damage = damage
 
-                    # Healing
-                    if points > 0:
-                        new_health = health + points
-                        new_health = str(min(new_health, max_health))
-                        character.get_health_and_armor()["Current HP"] = new_health
-                        messages.append(f"{name} has been healed to {new_health}/{max_health} HP!")
+                # Shield hit
+                if overshield > 0:
+                    overshield, remaining_damage = min(damage, overshield), min(damage, overshield)
+                    messages.append(f"The overshield took {damage} points of damage and now has {overshield} points left.")
 
-                    # Damaging
-                    else:
-                        # Goes through shield first
-                        if shield > 0:
-                            # Check for shield destruction
-                            if shield <= abs(points):
-                                old_shield = shield
-                                shield += points
-                                points += old_shield
-                                messages.append(f"{name}'s shield/overheal/temporary shield has been removed!")
+                # Health hit
+                if remaining_damage > 0:
+                    health, remaining_damage = min(remaining_damage, health), min(remaining_damage, health)
+                    messages.append(f"{name} took {remaining_damage} points of damage and now has {health} points left.")
 
-                            else:
-                                shield += points
-                                messages.append(f"{name}'s shield/overheal/temporary shield has been reduced to {shield}!")
-                                points = 0
+                # Update the character
+                
+                
+                output_message = "\n".join(messages)
+                await ctx.send(output_message)
 
-                        if points < 0:
-                            health = max(0, health + points)
-                            messages.append(f"{name}'s health has been reduced to {health}/{max_health}!")
-                            # Check for knock down
-                            if health <= 0:
-                                messages.append(f"{name} has been knocked down!")
-
-                        character.get_health_and_armor()["Temporary HP"] = str(shield)
-                        character.get_health_and_armor()["Current HP"] = str(health)
-
-                    output_message = "\n".join(messages)
-                    await ctx.send(output_message)
-
-            if not found:
-                await ctx.send(f"{name} could not be found! Are you sure {owner} owns this character?")
+        if not found:
+            await ctx.send(f"{name} could not be found! Are you sure {owner} owns this character?")
  
 async def setup(bot):
     await bot.add_cog(CharacterStats(bot))

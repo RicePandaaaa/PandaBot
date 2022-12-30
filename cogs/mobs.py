@@ -102,9 +102,9 @@ class Mobs(commands.Cog):
             await ctx.send(embed=embed, view=page_flip_view)
 
 
-
     @commands.hybrid_command(brief="Get attributes",
                       description="Get all attributes a mob can have")
+    @app_commands.guilds(discord.Object(id=824092658574032907))
     async def getattributes(self, ctx: commands.Context):
         await ctx.send(", ".join(self.data_keys))
 
